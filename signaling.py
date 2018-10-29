@@ -141,5 +141,5 @@ class Signaling:
             return
 
         for si in msi2s:
-            msi2s[si](**kwargs)
+            msi2s[si](self, **kwargs)
 
