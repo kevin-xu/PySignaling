@@ -109,7 +109,12 @@ class Signaling:
             _ms2sis[signal].clear()
 
     def disconnectAll(self):
-        for signal in type(self)._signals_:
+        klass = type(self)
+
+        if not klass._signals_:
+            return
+
+        for signal in klass._signals_:
             self.disconnectSignal(signal)
 
     def emit(self, signal, **kwargs):
@@ -131,6 +136,9 @@ class Signaling:
             return
 
         msi2s = self._ms2msi2s[signal]
+
+        if not msi2s:
+            return
 
         for si in msi2s:
             msi2s[si](**kwargs)
