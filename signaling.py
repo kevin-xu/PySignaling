@@ -30,7 +30,7 @@ class Signaling:
         klass._signals_ = {}
 
     @classmethod
-    def register(klass, signal, **signature):
+    def signalize(klass, signal, **signature):
         for key in signature:
             if not isinstance(signature[key], type):
                 raise TypeError("")
