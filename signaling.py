@@ -38,9 +38,9 @@ class Signaling:
         klass._signals_[signal] = signature
 
     def __init__(self):
-        self._ms2si = {}
-        self._ms2sis = {}
-        self._ms2msi2s = {}
+        self.__ms2si = {}
+        self.__ms2sis = {}
+        self.__ms2msi2s = {}
 
     def connect(self, signal, slot):
         if not signal in type(self)._signals_:
@@ -49,20 +49,20 @@ class Signaling:
         if not callable(slot):
             raise TypeError("")
 
-        if not signal in self._ms2si:
-            self._ms2si[signal] = 0
+        if not signal in self.__ms2si:
+            self.__ms2si[signal] = 0
 
-        if signal in _ms2sis and self._ms2sis[signal]:
-            subconnectionId = self._ms2sis[signal].pop(0)
+        if signal in self.__ms2sis and self.__ms2sis[signal]:
+            subconnectionId = self.__ms2sis[signal].pop(0)
         else:
-            subconnectionId = self._ms2si[signal]
+            subconnectionId = self.__ms2si[signal]
 
-            self._ms2si[signal] += 1
+            self.__ms2si[signal] += 1
 
-        if not signal in self._ms2msi2s:
-            self._ms2msi2s[signal] = {}
+        if not signal in self.__ms2msi2s:
+            self.__ms2msi2s[signal] = {}
 
-        self._ms2msi2s[signal][subconnectionId] = slot
+        self.__ms2msi2s[signal][subconnectionId] = slot
 
         return (signal, subconnectionId)
 
@@ -78,35 +78,35 @@ class Signaling:
         if not signal in type(self)._signals_:
             raise ValueError("")
 
-        if not signal in self._ms2msi2s:
+        if not signal in self.__ms2msi2s:
             return
 
         subconnectionId = connectionId[1]
 
-        msi2s = self._ms2msi2s[signal]
+        msi2s = self.__ms2msi2s[signal]
 
         if not subconnectionId in msi2s:
             return
 
         msi2s.pop(subconnectionId)
 
-        if not signal in self._ms2sis:
-            self._ms2sis[signal] = []
+        if not signal in self.__ms2sis:
+            self.__ms2sis[signal] = []
 
-        self._ms2sis[signal].append(subconnectionId)
+        self.__ms2sis[signal].append(subconnectionId)
 
     def disconnectSignal(self, signal):
         if not signal in type(self)._signals_:
             raise ValueError("")
 
-        if signal in _ms2msi2s:
-            _ms2msi2s[signal].clear()
+        if signal in self.__ms2msi2s:
+            self.__ms2msi2s[signal].clear()
 
-        if signal in _ms2si:
-            _ms2si[signal] = 0
+        if signal in self.__ms2si:
+            self.__ms2si[signal] = 0
 
-        if signal in _ms2sis:
-            _ms2sis[signal].clear()
+        if signal in self.__ms2sis:
+            self.__ms2sis[signal].clear()
 
     def disconnectAll(self):
         klass = type(self)
@@ -132,10 +132,10 @@ class Signaling:
             if not isinstance(kwargs[key], signature[key]):
                 raise TypeError("")
 
-        if not signal in self._ms2msi2s:
+        if not signal in self.__ms2msi2s:
             return
 
-        msi2s = self._ms2msi2s[signal]
+        msi2s = self.__ms2msi2s[signal]
 
         if not msi2s:
             return
