@@ -49,20 +49,20 @@ class Signaling:
         if not callable(slot):
             raise TypeError("")
 
-        if not signal in self._ms2msi2s:
-            self._ms2msi2s[signal] = {}
-
-        msi2s = self._ms2msi2s[signal]
+        if not signal in self._ms2si:
+            self._ms2si[signal] = 0
 
         if signal in _ms2sis and self._ms2sis[signal]:
             subconnectionId = self._ms2sis[signal].pop(0)
         else:
-            if not signal in self._ms2si:
-                self._ms2si[signal] = 0
+            subconnectionId = self._ms2si[signal]
 
-            subconnectionId = self._ms2si[signal], self._ms2si[signal] += 1
+            self._ms2si[signal] += 1
 
-        msi2s[subconnectionId] = slot
+        if not signal in self._ms2msi2s:
+            self._ms2msi2s[signal] = {}
+
+        self._ms2msi2s[signal][subconnectionId] = slot
 
         return (signal, subconnectionId)
 
